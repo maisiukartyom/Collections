@@ -1,0 +1,79 @@
+﻿@{
+    ViewData["Title"] = "Profile";
+}
+@model List<MCollection>
+
+<link rel="stylesheet" href="~/css/site.css" />
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+ <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> 
+
+<div class="profile">
+    <div style="display:flex; flex-direction:column; gap: 10px">
+         <div class="form-group">
+    <label class="col-form-label mt-4" for="inputDefault">Name</label>
+    <input type="text" class="form-control" name="collection" id="name" style="width: 250px; font-size: 20px">
+  </div>
+  <div class="form-group">
+    <label class="col-form-label mt-4" for="inputDefault">Theme</label>
+    <input type="text" class="form-control" name="collection" id="theme" style="width: 250px; font-size: 20px">
+  </div>
+  <div class="form-group">
+      <label for="exampleTextarea" class="form-label mt-4">Describtion</label>
+      <textarea class="form-control" id="describtion" rows="6" name="collection" style="overflow-y: scroll; width: 250px"></textarea>
+    </div>
+  <button type="submit" id="btadd" onclick="add()" class="btn btn-primary" style="margin-top: 30px">Add collection</button>
+  </div>
+<div id="divPartial" class="containner custom-scrollbar" style="
+                margin:4px, 4px;
+                padding:4px;
+                width: 700px;
+                height: 650px;
+                overflow-x: hidden;
+                overflow-y: auto;
+                text-align:justify; margin-top:25px;
+box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
+    <partial name="_CollectionsList" />
+</div>
+    
+ 
+</div>
+
+<script>
+    function add(){
+        var name = document.getElementById("name");
+        var theme = document.getElementById("theme");
+        var describtion = document.getElementById("describtion");
+        if (name.value === "" || theme.value === "" || describtion.value === ""){
+            toastr.error("Invalid input data!")
+        }
+        else{
+            $.ajax({
+            url: '@Url.Action("UpdateCollections","Home")',
+            data: { name : name.value, theme: theme.value, describtion: describtion.value},
+            success: function (result) {
+                $('#divPartial').html(result)
+            },
+            error: function (xhr, exception) {
+                return false;
+            }
+            });
+        }
+        
+        name.value = "";
+        theme.value = "";
+        describtion.value = "";
+    }
+
+    function del(id){
+            $.ajax({
+            url: '@Url.Action("DeleteCollection","Home")',
+            data: { name : id},
+            success: function (result) {
+                $('#divPartial').html(result)
+            },
+            error: function (xhr, exception) {
+                return false;
+            }
+            });
+        }
+</script>

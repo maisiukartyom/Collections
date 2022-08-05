@@ -1,0 +1,29 @@
+﻿@model List<MCollection>
+
+	@*<link rel="stylesheet" href="~/css/collection.css" />*@
+@{
+    foreach (var obj in Model)
+    {
+        <div style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 5px; background: #fc346f; margin-top: 5px">
+			<div class="product-details">
+		
+			<h1>@obj.Name</h1>
+			<h3>@obj.Theme</h3>
+			<h5>Owner: @obj.Owner</h5>
+		
+			<p class="information">@obj.Description</p>
+
+			<div class="control">
+				<button class="btn">
+					<span class="buy">Open</span>
+				</button>
+			</div>
+			</div>
+	
+			<div class="product-image">
+				<img src="@obj.Image" alt="Nothing">
+			</div>
+			<button id="@obj.Name" onclick="del(this.id)">Delete</button>
+        </div>
+    }
+}
