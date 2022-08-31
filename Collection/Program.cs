@@ -10,17 +10,17 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     .AddCookie(options => { options.LoginPath = "/login"; });
 
 builder.Services.AddDbContext<UsersDbContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("Users")));
+    builder.Configuration.GetConnectionString("CourseProject")));
 builder.Services.AddDbContext<CollectionsDbContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("Collections")));
+    builder.Configuration.GetConnectionString("CourseProject")));
 builder.Services.AddDbContext<ItemsDbContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("Items")));
+    builder.Configuration.GetConnectionString("CourseProject")));
 builder.Services.AddDbContext<LikesDbContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("Likes")));
+    builder.Configuration.GetConnectionString("CourseProject")));
 builder.Services.AddDbContext<CommentsDbContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("Comments")));
+    builder.Configuration.GetConnectionString("CourseProject")));
 builder.Services.AddDbContext<TagsDbContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("Tags")));
+    builder.Configuration.GetConnectionString("CourseProject")));
 
 var app = builder.Build();
 
