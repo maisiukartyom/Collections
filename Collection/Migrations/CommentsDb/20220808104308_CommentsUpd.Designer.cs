@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Collection.Migrations.LikesDb
+namespace Collection.Migrations.CommentsDb
 {
-    [DbContext(typeof(LikesDbContext))]
-    [Migration("20220804171430_LikesDb")]
-    partial class LikesDb
+    [DbContext(typeof(CommentsDbContext))]
+    [Migration("20220808104308_CommentsUpd")]
+    partial class CommentsUpd
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,7 +23,7 @@ namespace Collection.Migrations.LikesDb
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Collection.Models.Like", b =>
+            modelBuilder.Entity("Collection.Models.Comment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -31,9 +31,12 @@ namespace Collection.Migrations.LikesDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Item")
+                    b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -41,7 +44,7 @@ namespace Collection.Migrations.LikesDb
 
                     b.HasKey("Id");
 
-                    b.ToTable("Likes");
+                    b.ToTable("Comments");
                 });
 #pragma warning restore 612, 618
         }

@@ -26,7 +26,7 @@
     height: 100%;
 }
 
-label {
+.llabel {
     color: #fff;
     font-size: 2.3em;
     justify-content: center;
@@ -37,7 +37,7 @@ label {
     transition: .5s ease-in-out;
 }
 
-input {
+.linput {
     width: 60%;
     height: 40px;
     background: #e0dede;
@@ -50,7 +50,7 @@ input {
     border-radius: 5px;
 }
 
-button {
+.lbutton {
     width: 60%;
     height: 40px;
     margin: 10px auto;

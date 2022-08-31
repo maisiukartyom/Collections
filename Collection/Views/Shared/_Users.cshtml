@@ -1,0 +1,24 @@
+﻿@model List<User>
+
+@foreach(var obj in Model)
+            {
+                <tr>
+                    <td width="10%">
+                        <a asp-route-id="@obj.UserName" asp-action="Profile">@obj.UserName</a>
+                    </td>
+                    <td width="10%">
+                        @obj.isAdmin
+                    </td>
+                    <td width="5%">
+                        @obj.isBanned
+                    </td>
+                    <td width="20%">
+                        <a type="submit" asp-route-name="@obj.UserName" asp-action="DeleteUser" class="btn btn-primary btn-sm"><i class="bi bi-trash-fill"></i> Delete</a>
+                        <a type="submit" asp-route-name="@obj.UserName" asp-action="BanUser" class="btn btn-primary btn-sm"><i class="bi bi-shield-lock"></i> Ban</a>
+                        <a type="submit" asp-route-name="@obj.UserName" asp-action="DeBanUser" class="btn btn-primary btn-sm"><i class="bi bi-shield"></i> Deban</a>
+                        <a type="submit" asp-route-name="@obj.UserName" asp-action="AdminUser" class="btn btn-primary btn-sm"><i class="bi bi-shield"></i> Admin</a>
+                        <a type="submit" asp-route-name="@obj.UserName" asp-action="DeAdminUser" class="btn btn-primary btn-sm"><i class="bi bi-shield"></i> DeAdmin</a>
+                    </td>
+                
+                </tr>
+            }

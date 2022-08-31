@@ -1,0 +1,114 @@
+﻿@model dynamic
+
+<div style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px; background: #254c4f; margin-top: 5px; border-radius: 5px;">
+			<div class="product-details">
+		
+			<h1>@Model.Item.Name</h1>
+			<h3>@Model.Item.Collection</h3>
+			<h5>@Model.Item.Tags</h5>
+            </div>
+</div>
+<div>
+    <button value="empty" onclick="addlike()" id="likes"></button>
+</div>
+
+ <div class="form-group">
+    <label id="content" class="col-form-label mt-4" for="inputDefault">Content</label>
+     <textarea class="form-control" id="content" rows="6" name="comment" style="overflow-y: scroll; width: 250px"></textarea>
+ </div>
+<button type="submit" id="btadd" onclick="add()" class="btn btn-primary" style="margin-top: 30px">Comment</button>
+
+  <div id="divPartial" class="containner custom-scrollbar" style="
+                margin:4px, 4px;
+                padding:4px;
+                width: 700px;
+                height: 300px;
+                overflow-x: hidden;
+                overflow-y: auto;
+                text-align:justify; margin-top:25px;
+box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
+    <partial name="_Comments" />
+</div>
+
+
+<script>
+    if (localStorage.getItem('lang') === "ru"){
+        document.getElementById("btadd").innerText = "Отправить"
+        document.getElementById("content").innerText = "Содержимое"
+    }
+
+    var but = document.getElementById("likes")
+    but.textContent = "Likes " + @ViewData["likes"]
+    if ("@ViewData["liked"]" === "yes"){
+         but.style.backgroundColor='#00FF00';
+         but.value = "full";
+    }
+    else{
+        but.style.backgroundColor='#ffff'
+    }
+    
+    function loadPartialView(){
+         $.ajax({
+            url: '@Url.Action("UpdateComments","Home")',
+            data: {id: @TempData["ItemId"]},
+            success: function (result) {
+                $('#divPartial').html(result)
+            },
+            error: function (xhr, exception) {
+                return false;
+            }
+            });
+    }
+
+    window.setInterval("loadPartialView()", 2000);
+</script>
+
+<script>
+    function add(){
+        var content = document.getElementById("content");
+        if (content.value != ""){
+            $.ajax({
+            url: '@Url.Action("AddComment","Home")',
+            data: {id: @TempData["ItemId"], content: content.value},
+            success: function (result) {
+                $('#divPartial').html(result)
+            },
+            error: function (xhr, exception) {
+                return false;
+            }
+            });
+            content.value = ""
+        }
+    }
+    function addlike(){
+        if (but.value === "empty"){
+            $.ajax({
+            url: '@Url.Action("AddLike","Home")',
+            data: {id: @TempData["ItemId"]},
+            success: function (result) {
+                but.textContent = "Likes " + result;
+                but.value = "full";
+                but.style.backgroundColor='#00FF00'
+            },
+            error: function (xhr, exception) {
+                return false;
+            }
+            });
+        }
+        else{
+            $.ajax({
+            url: '@Url.Action("RemoveLike","Home")',
+            data: {id: @TempData["ItemId"]},
+            success: function (result) {
+                but.textContent = "Likes " + result
+                but.value = "empty";
+                but.style.backgroundColor='#ffff'
+            },
+            error: function (xhr, exception) {
+                return false;
+            }
+            });
+        }
+        
+    }
+</script>

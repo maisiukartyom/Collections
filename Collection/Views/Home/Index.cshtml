@@ -1,3 +1,100 @@
 ﻿@{
     ViewData["Title"] = "";
 }
+@model dynamic
+<div style="display:flex; flex-direction:row; gap: 20px">
+<div>
+    @{
+    <h2 id="last">Last added item</h2>
+    if (@Model.Item != null)
+    {
+       <p>
+        <i id="iname">Name</i>: @Model.Item.Name <br />
+        <i id="icol">Collection</i>: @Model.Item.Collection
+        </p>
+        <br />
+    }
+    else
+    {
+        <p>
+            No items exist!
+        </p>
+    }
+     
+}
+</div>
+
+<div>
+
+
+<h2 class="first" id="biggest">Top 5 biggest collections</h2>
+<div id="divPartial" class="containner custom-scrollbar" style="
+                margin:4px, 4px;
+                padding:4px;
+                width: 700px;
+                height: 600px;
+                overflow-x: hidden;
+                overflow-y: auto;
+                text-align:justify; margin-top:25px;
+box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
+
+@{
+    foreach (var obj in Model.Collections)
+    {
+        <div style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 5px; background: #fc346f; margin-top: 5px">
+			<div class="product-details">
+		
+			<a asp-route-id="@obj.Name" asp-action="Collections"><h1>@obj.Name</h1></a>
+			<h3>@obj.Theme</h3>
+			<h5>Owner: @obj.Owner</h5>
+		
+			<p class="information">@obj.Description</p>
+			</div>
+	
+			<div class="product-image">
+				<img src="@obj.Image" alt="Nothing">
+			</div>
+            <p>Size: @obj.Size</p>
+        </div>
+    }
+}
+
+</div>
+</div>
+</div>
+<div class="container">
+    <div id="tags">
+        @{
+            foreach(var obj in Model.Tags)
+            {
+                var random = new Random();
+                <a asp-route-id="@obj" asp-action="Search"  rel="@random.Next(3, 15)">@obj</a>
+            }
+        }
+    </div>
+</div>
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script> 
+<script src="~/js/jquery.tagcloud.js"></script>
+<script>
+
+    if (localStorage.getItem('lang') === "ru"){
+        document.getElementById("biggest").innerText = "Топ 5 больших коллекций"
+        document.getElementById("last").innerText = "Последний добавленный айтем"
+        document.getElementById("iname").innerText = "Название"
+        document.getElementById("icol").innerText = "Коллекция"
+    }
+
+    $('#tags a').tagcloud({
+        size: {
+            start: 12,
+            end: 45,
+            unit: 'pt'
+        },
+        color:{
+            start: '#aaa',
+            end: '#080'
+        }
+    })
+</script>

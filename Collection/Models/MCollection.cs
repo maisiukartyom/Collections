@@ -14,5 +14,7 @@ namespace Collection.Models
         public string Image { get; set; }
 
         public string Owner { get; set; }
+        public int Size { get; set; }
+        public string InputFields { get; set; }
     }
 }

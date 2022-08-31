@@ -7,8 +7,9 @@ namespace Collection.Models
         [Key]
         public int Id { get; set; }
 
-        public string Item { get; set; }
-        public string Name { get; set; }
+        public int ItemId { get; set; }
+
+        public string Owner { get; set; }
 
     }
 }

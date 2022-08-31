@@ -1,0 +1,118 @@
+﻿@model List<Item>
+
+
+<script>
+    //function loadPartialView(){
+    //     $.ajax({
+    //        url: '@Url.Action("ShowItems","Home")',
+    //        data: {name: "@TempData["Collection"]"},
+    //        success: function (result) {
+    //            $('tbody').html(result)
+    //        },
+    //        error: function (xhr, exception) {
+    //            return false;
+    //        }
+    //        });
+    //}
+
+    //window.setInterval("loadPartialView()", 2000);
+
+    function ddel(id){
+        console.log("yes")
+        $.ajax({
+            url: '@Url.Action("DeleteItem","Home")',
+            data: {id: id, collection: "@ViewData["Collection"]"},
+            success: function (result) {
+                $('tbody').html(result)
+            },
+            error: function (xhr, exception) {
+                return false;
+            }
+            });
+    }
+</script>
+
+<div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">@ViewData["Collection"]</h2>
+        </div>
+         <div class="col-6 text-end" id="create">
+            <a asp-route-id="@ViewData["Collection"]" asp-action="CreateItem" id="createbt" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> &nbsp; Create item
+            </a>
+        </div>
+    </div>
+
+<div style="display:flex; gap: 4px">
+    <select name="dog-names" id="sort">
+    <option value="id">ID</option>
+    <option value="name">Name</option>
+    </select>
+    <button id="btasc" onclick="ascend()">Ascend</button>
+    <button id="btdesc" onclick="descend()">Descend</button>
+</div>
+
+<table class="table table-bordered table-strped" style="width:100%; margin-top: 10px">
+        <thead>
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Tags
+                </th>
+                <th>
+
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <partial name="_ItemsList" />
+        </tbody>
+</table>
+
+<script>
+    if (localStorage.getItem('lang') === "ru"){
+        document.getElementById("createbt").innerText = "Создать айтем"
+        document.getElementById("btasc").innerText = "Возрастание"
+        document.getElementById("btdesc").innerText = "Убывание"
+    }
+
+    if ("@ViewData["admin"]" === "false"){
+        console.log("sds")
+        document.getElementById("create").style.visibility = "hidden";
+    }
+
+    function ascend(){
+         var sel = document.getElementById("sort")
+         $.ajax({
+            url: '@Url.Action("Ascend","Home")',
+            data: {name: "@ViewData["Collection"]", value: sel.value},
+            success: function (result) {
+                $('tbody').html(result)
+            },
+            error: function (xhr, exception) {
+                return false;
+            }
+            });
+    }
+
+    function descend(){
+        var sel = document.getElementById("sort")
+        $.ajax({
+            url: '@Url.Action("Descend","Home")',
+            data: {name: "@ViewData["Collection"]", value: sel.value},
+            success: function (result) {
+                $('tbody').html(result)
+            },
+            error: function (xhr, exception) {
+                return false;
+            }
+            });
+    }
+    
+</script>
+

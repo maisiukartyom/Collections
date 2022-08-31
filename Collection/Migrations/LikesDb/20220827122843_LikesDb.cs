@@ -2,32 +2,31 @@
 
 #nullable disable
 
-namespace Collection.Migrations.ItemsDb
+namespace Collection.Migrations.LikesDb
 {
-    public partial class ItemsDb : Migration
+    public partial class LikesDb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Items",
+                name: "Likes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Tags = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Collection = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ItemId = table.Column<int>(type: "int", nullable: false),
+                    Owner = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Items", x => x.Id);
+                    table.PrimaryKey("PK_Likes", x => x.Id);
                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Items");
+                name: "Likes");
         }
     }
 }

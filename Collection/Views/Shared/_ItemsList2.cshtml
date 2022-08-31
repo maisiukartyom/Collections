@@ -1,0 +1,16 @@
+﻿@model List<Item>
+
+@foreach(var obj in Model)
+            {
+                <tr>
+                    <td width="5%">
+                        @obj.Id
+                    </td>
+                    <td width="15%">
+                        <a asp-route-id="@obj.Id" asp-action="Item">@obj.Name</a>
+                    </td>
+                    <td width="15%">
+                        @obj.Tags
+                    </td>
+                </tr>
+            }

@@ -19,6 +19,8 @@ builder.Services.AddDbContext<LikesDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("Likes")));
 builder.Services.AddDbContext<CommentsDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("Comments")));
+builder.Services.AddDbContext<TagsDbContext>(options => options.UseSqlServer(
+    builder.Configuration.GetConnectionString("Tags")));
 
 var app = builder.Build();
 

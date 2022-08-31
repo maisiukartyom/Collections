@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Collection.Migrations.CommentsDb
+namespace Collection.Migrations.ItemsDb
 {
-    [DbContext(typeof(CommentsDbContext))]
-    [Migration("20220804171457_CommentsDb")]
-    partial class CommentsDb
+    [DbContext(typeof(ItemsDbContext))]
+    [Migration("20220829123831_ItemsDb")]
+    partial class ItemsDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,7 +23,7 @@ namespace Collection.Migrations.CommentsDb
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Collection.Models.Comment", b =>
+            modelBuilder.Entity("Collection.Models.Item", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -35,17 +35,21 @@ namespace Collection.Migrations.CommentsDb
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Content")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Options")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Tags")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Items");
                 });
 #pragma warning restore 612, 618
         }

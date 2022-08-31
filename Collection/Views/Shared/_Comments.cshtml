@@ -1,0 +1,18 @@
+﻿@model dynamic
+
+@{
+    foreach (var obj in Model.Comments)
+    {
+        <div style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 5px; background: #fc346f; margin-top: 5px">
+			<div class="product-details">
+		
+			<h1>By @obj.Name</h1>
+			
+			<p class="information">@obj.Content</p>
+			</div>
+
+			
+        </div>
+    }
+}
+

@@ -7,7 +7,7 @@
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
-    <link rel="stylesheet" href="~/css/bootstraptheme.css" />
+    <link rel="stylesheet" href="/css/bootstraptheme.css" id="theme-link"/>
 
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Collection.styles.css" asp-append-version="true" />
@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
     <!-- ====== CSS ====== -->
     <link rel="stylesheet" href="~/css/toast.css ">
+
 </head>
 <body>
     <header>
@@ -28,15 +29,29 @@
             <div class="collapse navbar-collapse" id="navbarColor01">
               <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" style="font-size: 25px">Home</a>
+                    <a id="home" class="nav-link" asp-area="" asp-controller="Home" asp-action="Index" style="font-size: 25px">Main</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Profile" style="font-size: 25px">Profile</a>
+                    <a id="profile" class="nav-link" asp-route-id="" asp-area="" asp-controller="Home" asp-action="Profile" style="font-size: 25px">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a id="admin" class="nav-link" asp-area="" asp-controller="Home" asp-action="Admin" style="font-size: 25px">Admin</a>
+                </li>
+                <li class="nav-item">
+                    <a id="login" class="nav-link" asp-area="" asp-controller="Home" asp-action="Login" style="font-size: 25px">Login</a>
+                </li>
+                <li>
+                    <label class="switch">
+                    <input type="checkbox" id="theme">
+                    <span class="slider round"></span>
+                    </label>
                 </li>
               </ul>
-              <form class="d-flex">
-                <input class="form-control me-sm-2" type="text" placeholder="Search">
-                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+
+              
+              <form method="post" class="d-flex">
+                <input name="itname" id="search" class="form-control me-sm-2" type="text">
+                <button id="btsearch" type="submit" asp-action="SearchItem" class="btn btn-secondary my-2 my-sm-0">Search</button>
                 </form>
               
             </div>
@@ -51,7 +66,8 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2022 - Collection - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <a href="" onclick="en()">En</a>
+            <a href="" onclick="ru()">Ru</a>
         </div>
     </footer>
     <!-- Option 1: Bootstrap Bundle with Popper -->
@@ -62,3 +78,88 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+<script src="~/lib/jquery/dist/jquery.min.js"></script> 
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<partial name="_Notification" />
+<script>
+    function russify(){
+        document.getElementById("btsearch").innerText = "Поиск";
+        document.getElementById("home").innerText = "Главная"
+        document.getElementById("profile").innerText = "Профиль"
+        document.getElementById("admin").innerText = "Админ"
+        document.getElementById("login").innerText = "Логин"
+        
+    }
+
+    function englify(){
+        document.getElementById("btsearch").innerText = "Search";
+        document.getElementById("home").innerText = "Main"
+        document.getElementById("profile").innerText = "Profile"
+        document.getElementById("admin").innerText = "Admin"
+        document.getElementById("login").innerText = "Login"
+        
+    }
+
+    if (localStorage.getItem('lang') === "ru"){
+        russify()
+    }
+    //else{
+    //    englify()
+    //}
+
+
+    function ru(){
+        russify()
+        localStorage.setItem('lang', 'ru');
+    }
+
+    function en(){
+        englify()
+        localStorage.setItem('lang', 'en');
+    }
+
+    const btn = document.getElementById("theme");
+
+    const theme = document.querySelector("#theme-link");
+    if (localStorage.getItem('theme') === "dark"){
+        btn.checked = true;
+        theme.href = "/css/bootstrapthemedark.css";
+    }
+
+    btn.addEventListener("click", function() {
+        if (theme.getAttribute("href") == "/css/bootstraptheme.css") {
+            theme.href = "/css/bootstrapthemedark.css";
+            localStorage.setItem('theme', 'dark');
+        }else{
+            theme.href = "/css/bootstraptheme.css";
+            localStorage.setItem('theme', 'light');
+        }
+    });
+
+    $("#search").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: '@Url.Action("GetSearchValue","Home")',
+                dataType: "json",
+                data: { search: $("#search").val() },
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return { label: item, value: item };
+                    }));
+                },
+                error: function (xhr, status, error) {
+                    alert("Error");
+                }
+            });
+        },
+        onSelect: function(){
+            console.log("good")
+        }
+    });
+    var search = document.getElementById("search")
+    function change(){
+        //console.log("ok")
+    }
+</script>

@@ -1,0 +1,44 @@
+﻿@model List<User>
+@{
+    var username = ViewData["name"] as string;
+}
+
+<script>
+    function loadPartialView(){
+         $.ajax({
+            url: '@Url.Action("ShowUsers","Home")',
+            success: function (result) {
+                $('tbody').html(result)
+            },
+            error: function (xhr, exception) {
+                return false;
+            }
+            });
+    }
+
+    window.setInterval("loadPartialView()", 5000);
+</script>
+
+<div id = "scroller" style="overflow-y:auto; height: 700px; margin-top:20px">
+<table class="table table-bordered table-strped" style="width:100%; margin-top: 10px">
+        <thead>
+            <tr>
+                <th>
+                    Username
+                </th>
+                <th>
+                    isAdmin
+                </th>
+                <th>
+                    isBanned
+                </th>
+                <th>
+
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <partial name="_Users" />
+        </tbody>
+    </table>
+</div>

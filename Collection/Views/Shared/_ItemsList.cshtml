@@ -1,0 +1,23 @@
+﻿@model List<Item>
+
+@foreach(var obj in Model)
+            {
+                <tr>
+                    <td width="5%">
+                        @obj.Id
+                    </td>
+                    <td width="10%">
+                        <a asp-route-id="@obj.Id" asp-action="Item">@obj.Name</a>
+                    </td>
+                    <td width="15%">
+                        @obj.Tags
+                    </td>
+                    
+                    <td width="20%">
+                        <button type="submit" id="@obj.Id" onclick="ddel(this.id)" class="btn btn-primary btn-sm"><i class="bi bi-trash-fill"></i> Delete</button>
+                        <a asp-route-id="@obj.Id" asp-action="EditItem" class="btn btn-primary">
+                        <i class="bi bi-pencil-square"></i> &nbsp; Edit
+                        </a>
+                    </td>  
+                </tr>
+            }

@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Collection.Migrations.CollectionsDb
+namespace Collection.Migrations.LikesDb
 {
-    [DbContext(typeof(CollectionsDbContext))]
-    [Migration("20220804170510_CollectionsDb")]
-    partial class CollectionsDb
+    [DbContext(typeof(LikesDbContext))]
+    [Migration("20220827122843_LikesDb")]
+    partial class LikesDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,30 +23,24 @@ namespace Collection.Migrations.CollectionsDb
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Collection.Models.MCollection", b =>
+            modelBuilder.Entity("Collection.Models.Like", b =>
                 {
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ItemId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Owner")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Theme")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("Id");
 
-                    b.HasKey("Name");
-
-                    b.ToTable("Collections");
+                    b.ToTable("Likes");
                 });
 #pragma warning restore 612, 618
         }
