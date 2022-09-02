@@ -8,6 +8,10 @@ using System.Diagnostics;
 using System.Dynamic;
 using System.Security.Claims;
 using System.Text.Json;
+using System.Collections.Generic;
+using System.Web;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 
 namespace Collection.Controllers
 {
@@ -190,32 +194,67 @@ namespace Collection.Controllers
             return RedirectToAction("Login");
         }
 
-        public PartialViewResult UpdateCollections(string user, string name, string theme, string describtion,
-            string radio1, string input1, string radio2, string input2, string radio3, string input3)
+        [HttpPost]
+        public PartialViewResult UpdateCollections(string user, string name, string theme,
+            string describtion, IFormFile file)
         {
-            var inputs = new Inputs
+            //var inputs = new Inputs
+            //{
+            //    Name1 = input1,
+            //    Name2 = input2,
+            //    Name3 = input3,
+            //    Type1 = radio1,
+            //    Type2 = radio2,
+            //    Type3 = radio3,
+            //};
+
+            //string jsonString = JsonSerializer.Serialize(inputs);
+            //MCollection tmp = new MCollection();
+            //tmp.Name = name;
+            //tmp.Theme = theme;
+            //tmp.Description = describtion;
+            //tmp.Owner = user;
+            //tmp.InputFields = jsonString;
+            //if (file != null)
+            //{
+            byte[] fileBytes;
+            var ms = new MemoryStream();
+            //using (var ms = new MemoryStream())
             {
-                Name1 = input1,
-                Name2 = input2,
-                Name3 = input3,
-                Type1 = radio1,
-                Type2 = radio2,
-                Type3 = radio3,
+                file.CopyTo(ms);
+                fileBytes = ms.ToArray();
+            }
+
+            // Cloudinary part
+            Account account = new Account(
+            "dcogivo7d",
+            "612618111115367",
+            "kuLk0Gipv7SjZQniqG3-yhVA_QQ");
+
+            Cloudinary cloudinary = new Cloudinary(account);
+
+            // Here filepath or Stream are required
+            var uploadParams = new ImageUploadParams()
+            {
+                File = new FileDescription(file.FileName, ms)
             };
-            string jsonString = JsonSerializer.Serialize(inputs);
-            MCollection tmp = new MCollection();
-            tmp.Name = name;
-            tmp.Theme = theme;
-            tmp.Description = describtion;
-            tmp.Owner = user;
-            tmp.Image = "";
-            tmp.InputFields = jsonString;
-            _colDb.Collections.Add(tmp);
-            _colDb.SaveChanges();
+
+            var uploadResult = cloudinary.Upload(uploadParams);
+            //var xD = uploadResult.SecureUrl.AbsoluteUri;
+            //    tmp.Image = uploadResult.SecureUrl.AbsoluteUri;
+            //}
+            //else
+            //{
+            //    tmp.Image = "";
+            //};
+
+            //_colDb.Collections.Add(tmp);
+            //_colDb.SaveChanges();
+
             List<MCollection> collections = new List<MCollection>();
-            foreach (MCollection collection in _colDb.Collections)
-                if (collection.Owner == user)
-                    collections.Add(collection);
+            //foreach (MCollection collection in _colDb.Collections)
+            //    if (collection.Owner == user)
+            //        collections.Add(collection);
             return PartialView("_CollectionsList", collections);
         }
 

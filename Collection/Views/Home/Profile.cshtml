@@ -8,89 +8,98 @@
  <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> 
 
 <div class="profile">
-    <div style="display:flex; flex-direction:column; gap: 20px">
-    <div style="display:flex; flex-direction:column; gap: 10px">
-    <h1>@TempData["whois"]</h1>
-    <a class="btn btn-primary" asp-action="Logout" id="logout">Logout</a>
-    </div>
-    <div style="display:flex; flex-direction:column; gap: 10px">
-         <div class="form-group">
-    <label class="col-form-label mt-4" for="inputDefault" id="lname">Name</label>
-    <input type="text" class="form-control" name="collection" id="name" style="width: 250px; font-size: 20px">
-  </div>
-  <div class="form-group">
-    <label class="col-form-label mt-4" for="inputDefault"  id="ltheme">Theme</label>
-    <input type="text" class="form-control" name="collection" id="itheme" style="width: 250px; font-size: 20px">
-  </div>
-  <div class="form-group">
-      <label for="exampleTextarea" class="form-label mt-4"  id="ldescr">Describtion</label>
-      <textarea class="form-control" id="describtion" rows="6" name="collection" style="overflow-y: scroll; width: 250px"></textarea>
-    </div>
+    // Here POST and multipart/form-data
+      <form method="post" enctype="multipart/form-data" asp-action="UpdateCollections">
+        <div style="display:flex; flex-direction:column; gap: 20px">
+        <div style="display:flex; flex-direction:column; gap: 10px">
+        <h1>@TempData["whois"]</h1>
+        <a class="btn btn-primary" asp-action="Logout" id="logout">Logout</a>
+        </div>
+        <input value="@TempData["whois"]" name="user" type="text" style="visibility:hidden; height:1px">
+        // Input for a file
+        <input id="ifile" name="file" type="file">
+        <div style="display:flex; flex-direction:column; gap: 10px">
+             <div class="form-group">
+        <label class="col-form-label mt-4" for="inputDefault" id="lname">Name</label>
+        <input type="text" class="form-control" name="name" id="name" style="width: 250px; font-size: 20px">
+      </div>
+      <div class="form-group">
+        <label class="col-form-label mt-4" for="inputDefault"  id="ltheme">Theme</label>
+        <input type="text" class="form-control" name="theme" id="itheme" style="width: 250px; font-size: 20px">
+      </div>
+      <div class="form-group">
+          <label for="exampleTextarea" class="form-label mt-4"  id="ldescr">Describtion</label>
+          <textarea class="form-control" name="describtion" id="describtion" rows="6" style="overflow-y: scroll; width: 250px"></textarea>
+        </div>
+    
 
-    <div style="display:flex; flex-direction:column; gap: 5px">
+        @*<div style="display:flex; flex-direction:column; gap: 5px">
+            <div style="display:flex; flex-direction:row; gap: 5px"> 
+            <input type="radio" id="rnumber1" name="group1" value="number"/>
+            <label for="rnumber1">Number</label>
+
+            <input type="radio" id="rstring1" name="group1" value="string"/>
+            <label for="rstring1">String</label>
+
+            <input type="radio" id="rtxt1" name="group1" value="textfield"/>
+            <label for="rtxt1">Textfield</label>
+
+            <input type="radio" id="rchbx1" name="group1" value="yesno"/>
+            <label for="rchbx1">Yes/No</label>
+
+            <input type="radio" id="rdate1" name="group1" value="date"/>
+            <label for="rdate1">Date</label>
+
+            <input type="text" placeholder="Name" name="group11" style="width: 200px"/>
+
+        </div>
         <div style="display:flex; flex-direction:row; gap: 5px"> 
-        <input type="radio" id="rnumber1" name="group1" value="number"/>
-        <label for="rnumber1">Number</label>
+            <input type="radio" id="rnumber2" name="group2" value="number"/>
+            <label for="rnumber2">Number</label>
 
-        <input type="radio" id="rstring1" name="group1" value="string"/>
-        <label for="rstring1">String</label>
+            <input type="radio" id="rstring2" name="group2" value="string"/>
+            <label for="rstring2">String</label>
 
-        <input type="radio" id="rtxt1" name="group1" value="textfield"/>
-        <label for="rtxt1">Textfield</label>
+            <input type="radio" id="rtxt2" name="group2" value="textfield"/>
+            <label for="rtxt2">Textfield</label>
 
-        <input type="radio" id="rchbx1" name="group1" value="yesno"/>
-        <label for="rchbx1">Yes/No</label>
+            <input type="radio" id="rchbx2" name="group2" value="yesno"/>
+            <label for="rchbx2">Yes/No</label>
 
-        <input type="radio" id="rdate1" name="group1" value="date"/>
-        <label for="rdate1">Date</label>
+            <input type="radio" id="rdate2" name="group2" value="date"/>
+            <label for="rdate2">Date</label>
 
-        <input type="text" placeholder="Name" name="group11" style="width: 200px"/>
+            <input type="text" placeholder="Name" name="group22" style="width: 200px"/>
 
-    </div>
-    <div style="display:flex; flex-direction:row; gap: 5px"> 
-        <input type="radio" id="rnumber2" name="group2" value="number"/>
-        <label for="rnumber2">Number</label>
+        </div>
+        <div style="display:flex; flex-direction:row; gap: 5px"> 
+            <input type="radio" id="rnumber3" name="group3" value="number"/>
+            <label for="rnumber3">Number</label>
 
-        <input type="radio" id="rstring2" name="group2" value="string"/>
-        <label for="rstring2">String</label>
+            <input type="radio" id="rstring3" name="group3" value="string"/>
+            <label for="rstring3">String</label>
 
-        <input type="radio" id="rtxt2" name="group2" value="textfield"/>
-        <label for="rtxt2">Textfield</label>
+            <input type="radio" id="rtxt3" name="group3" value="textfield"/>
+            <label for="rtxt3">Textfield</label>
 
-        <input type="radio" id="rchbx2" name="group2" value="yesno"/>
-        <label for="rchbx2">Yes/No</label>
+            <input type="radio" id="rchbx3" name="group3" value="yesno"/>
+            <label for="rchbx3">Yes/No</label>
 
-        <input type="radio" id="rdate2" name="group2" value="date"/>
-        <label for="rdate2">Date</label>
+            <input type="radio" id="rdate3" name="group3" value="date"/>
+            <label for="rdate3">Date</label>
 
-        <input type="text" placeholder="Name" name="group22" style="width: 200px"/>
+            <input type="text" placeholder="Name" name="group33" style="width: 200px"/>
 
-    </div>
-    <div style="display:flex; flex-direction:row; gap: 5px"> 
-        <input type="radio" id="rnumber3" name="group3" value="number"/>
-        <label for="rnumber3">Number</label>
-
-        <input type="radio" id="rstring3" name="group3" value="string"/>
-        <label for="rstring3">String</label>
-
-        <input type="radio" id="rtxt3" name="group3" value="textfield"/>
-        <label for="rtxt3">Textfield</label>
-
-        <input type="radio" id="rchbx3" name="group3" value="yesno"/>
-        <label for="rchbx3">Yes/No</label>
-
-        <input type="radio" id="rdate3" name="group3" value="date"/>
-        <label for="rdate3">Date</label>
-
-        <input type="text" placeholder="Name" name="group33" style="width: 200px"/>
-
-    </div>
-    </div>
-    <button type="submit" id="btadd" onclick="add()" class="btn btn-primary" style="margin-top: 30px">Add collection</button> 
+        </div>
+        </div>*@
+        <button type="submit" id="btadd" onclick="add()" class="btn btn-primary" style="margin-top: 30px">Add collection</button> 
   
   
-</div>
-  </div>
+    </div>
+      </div>
+
+
+  </form>
 <div id="divPartial" class="containner custom-scrollbar" style="
                 margin:4px, 4px;
                 padding:4px;
@@ -107,7 +116,7 @@ box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
 </div>
 
 <script>
-
+    console.log(document.getElementsByName("user"))
     if (localStorage.getItem('lang') === "ru"){
         document.getElementById("lname").innerText = "Название"
         document.getElementById("ltheme").innerText = "Тема"
@@ -133,32 +142,49 @@ box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
         document.getElementById("logout").style.display = "none";
     }
     function add(){
-        var name = document.getElementById("name");
-        var theme = document.getElementById("itheme");
+        //var name = document.getElementById("name");
+        //var theme = document.getElementById("itheme");
+        //var attachments={}; 
+        //console.log(document.getElementById("ifile").files)
+        //for (var i = 0, f; f = document.getElementById("ifile").files[i]; i++) {
+        //var imageReader = new FileReader();
+        //imageReader.onload = (function(aFile){
+        //return function(e){
+        //    var tempFileData=e.target.result;
+        //    attachments[aFile.name]={};
+        //    attachments[aFile.name]["content_type"]=tempFileData.split(",")[0].split(":")[1].split(";")[0];
+        //    attachments[aFile.name]["data"]=tempFileData.split(",")[1];
 
-        var describtion = document.getElementById("describtion");
-        if (name.value === "" || theme.value === "" || describtion.value === ""){
-            toastr.error("Invalid input data!")
-        }
-        else{
-            $.ajax({
-            url: '@Url.Action("UpdateCollections","Home")',
-            data: { user: "@TempData["whois"]", name : name.value, theme: theme.value, describtion: describtion.value,
-         radio1: $('input[name="group1"]:checked').val(), input1: $('input[name="group11"]').val(),
-         radio2: $('input[name="group2"]:checked').val(), input2: $('input[name="group22"]').val(),
-         radio3: $('input[name="group3"]:checked').val(), input3: $('input[name="group33"]').val()},
-            success: function (result) {
-                $('#divPartial').html(result)
-            },
-            error: function (xhr, exception) {
-                return false;
-            }
-            });
-        }
+        //};
+        //})(f);
+        //console.log(attachments);
+        //}
+        console.log(document.getElementsByName("user"))
         
-        name.value = "";
-        theme.value = "";
-        describtion.value = "";
+        //var describtion = document.getElementById("describtion");
+        //if (name.value === "" || theme.value === "" || describtion.value === ""){
+        //    toastr.error("Invalid input data!")
+        //}
+        //else{
+        //    $.ajax({
+        //    url: '@Url.Action("UpdateCollections","Home")',
+        //    data: { user: "@TempData["whois"]", name : name.value, theme: theme.value, describtion: describtion.value,
+        // radio1: $('input[name="group1"]:checked').val(), input1: $('input[name="group11"]').val(),
+        // radio2: $('input[name="group2"]:checked').val(), input2: $('input[name="group22"]').val(),
+        // radio3: $('input[name="group3"]:checked').val(), input3: $('input[name="group33"]').val(), 
+        // file: document.getElementById("ifile").files[0].path},
+        //    success: function (result) {
+        //        $('#divPartial').html(result)
+        //    },
+        //    error: function (xhr, exception) {
+        //        return false;
+        //    }
+        //    });
+        //}
+        
+        //name.value = "";
+        //theme.value = "";
+        //describtion.value = "";
     }
 
     function ddel(id){
