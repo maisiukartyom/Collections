@@ -56,8 +56,9 @@ box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
 @{
     foreach (var obj in Model.Collections)
     {
-        <div class="ibox" style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 5px; background: #fc346f; margin-top: 5px">
-			<div class="product-details">
+        <div class="ibox" style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 5px; margin-top: 5px">
+			<div style="margin-left: 10px; margin-top: 5px">
+            <div class="product-details">
 		
 			<a asp-route-id="@obj.Name" asp-action="Collections"><h2>@obj.Name</h2></a>
 			<h4>Theme: @obj.Theme</h4>
@@ -70,6 +71,7 @@ box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
 				<img src="@obj.Image" alt="Nothing">
 			</div>
             <h5>Size: @obj.Size</h5>
+            </div>
         </div>
     }
 }

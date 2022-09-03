@@ -1,0 +1,68 @@
+﻿@model List<MCollection>
+
+<div style="margin-top:50px; display:flex; gap: 4px">
+    <select name="dog-names" id="sort">
+    <option value="name">Name</option>
+    <option value="owner">Owner</option>
+    <option value="theme">Theme</option>
+    </select>
+    <button id="btasc" onclick="ascend()">Ascend</button>
+    <button id="btdesc" onclick="descend()">Descend</button>
+</div>
+
+<table class="table table-bordered table-strped" style="width:100%; margin-top: 10px">
+        <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Theme
+                </th>
+                <th>
+                    Owner
+                </th>
+                <th>
+                    Size
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <partial name="_AllCollectionsList" />
+        </tbody>
+</table>
+
+<script>
+    if (localStorage.getItem('lang') === "ru"){
+    }
+
+    function ascend(){
+         var sel = document.getElementById("sort")
+         $.ajax({
+            url: '@Url.Action("AscendCol","Home")',
+            data: {value: sel.value},
+            success: function (result) {
+                $('tbody').html(result)
+            },
+            error: function (xhr, exception) {
+                return false;
+            }
+            });
+    }
+
+    function descend(){
+        var sel = document.getElementById("sort")
+        $.ajax({
+            url: '@Url.Action("DescendCol","Home")',
+            data: {value: sel.value},
+            success: function (result) {
+                $('tbody').html(result)
+            },
+            error: function (xhr, exception) {
+                return false;
+            }
+            });
+    }
+    
+</script>
+

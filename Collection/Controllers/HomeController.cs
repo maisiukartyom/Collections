@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Web;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using System.Linq;
 
 namespace Collection.Controllers
 {
@@ -39,11 +40,13 @@ namespace Collection.Controllers
         public async Task<IActionResult> Index()
         {
             if (User.Identity.IsAuthenticated)
-                if (_uDb.Users.Find(User.Identity.Name).isBanned == true || _uDb.Users.Find(User.Identity.Name) == null)
+            {
+                if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
                 {
-                    await HttpContext.SignOutAsync();
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Logout");
                 }
+            }
+                
             List<Tag> tags = new List<Tag>();
             List<string> ttags = new List<string>();
 
@@ -80,6 +83,10 @@ namespace Collection.Controllers
 
         public IActionResult AddCollection(List<string> collection)
         {
+            if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+            {
+                return RedirectToAction("Logout");
+            }
             MCollection tmp = new MCollection();
             tmp.Name = collection[0];
             tmp.Theme = collection[1];
@@ -99,10 +106,9 @@ namespace Collection.Controllers
             {
                 if (User.Identity.IsAuthenticated)
                 {
-                    if (_uDb.Users.Find(User.Identity.Name).isBanned == true || _uDb.Users.Find(User.Identity.Name) == null)
+                    if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
                     {
-                        await HttpContext.SignOutAsync();
-                        return RedirectToAction("Index");
+                        return RedirectToAction("Logout");
                     }
                     user = User.Identity.Name;
                     ViewData["admin"] = "ignor";
@@ -195,9 +201,13 @@ namespace Collection.Controllers
         }
 
         [HttpPost]
-        public PartialViewResult UpdateCollections(string user, string name, string theme,
+        public ActionResult UpdateCollections(string user, string name, string theme,
             string describtion, IFormFile file)
         {
+            if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+            {
+                return RedirectToAction("Logout");
+            }
             //var inputs = new Inputs
             //{
             //    Name1 = input1,
@@ -266,8 +276,12 @@ namespace Collection.Controllers
                     collections.Add(collection);
             return PartialView("_CollectionsList", collections);
         }
-        public PartialViewResult DeleteCollection(string name, string user /*string admin*/)
+        public ActionResult DeleteCollection(string name, string user /*string admin*/)
         {
+            if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+            {
+                return RedirectToAction("Logout");
+            }
             var tmp = _colDb.Collections.Find(name);
             _colDb.Collections.Remove(tmp);
             _colDb.SaveChanges();
@@ -289,6 +303,11 @@ namespace Collection.Controllers
         [Authorize]
         public ActionResult DeleteUser(string name)
         {
+            if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+            {
+                return RedirectToAction("Logout");
+            }
+
             var tmp = _uDb.Users.Find(name);
             _uDb.Users.Remove(tmp);
             _uDb.SaveChanges();
@@ -322,6 +341,11 @@ namespace Collection.Controllers
         [Authorize]
         public IActionResult BanUser(string name)
         {
+            if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+            {
+                return RedirectToAction("Logout");
+            }
+
             var tmp = _uDb.Users.Find(name);
             tmp.isBanned = true;
             _uDb.Users.Update(tmp);
@@ -336,6 +360,11 @@ namespace Collection.Controllers
         [Authorize]
         public ActionResult DebanUser(string name)
         {
+            if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+            {
+                return RedirectToAction("Logout");
+            }
+
             var tmp = _uDb.Users.Find(name);
             tmp.isBanned = false;
             _uDb.Users.Update(tmp);
@@ -346,6 +375,11 @@ namespace Collection.Controllers
         [Authorize]
         public ActionResult AdminUser(string name)
         {
+            if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+            {
+                return RedirectToAction("Logout");
+            }
+
             var tmp = _uDb.Users.Find(name);
             tmp.isAdmin = true;
             _uDb.Users.Update(tmp);
@@ -356,6 +390,11 @@ namespace Collection.Controllers
         [Authorize]
         public ActionResult DeadminUser(string name)
         {
+            if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+            {
+                return RedirectToAction("Logout");
+            }
+
             var tmp = _uDb.Users.Find(name);
             tmp.isAdmin = false;
             _uDb.Users.Update(tmp);
@@ -368,10 +407,9 @@ namespace Collection.Controllers
         public async Task<IActionResult> Search(string id)
         {
             if (User.Identity.IsAuthenticated)
-                if (_uDb.Users.Find(User.Identity.Name).isBanned == true || _uDb.Users.Find(User.Identity.Name) == null)
+                if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
                 {
-                    await HttpContext.SignOutAsync();
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Logout");
                 }
             List<Item> items = new List<Item>();
             foreach (Tag tag in _tagDb.Tags)
@@ -385,10 +423,9 @@ namespace Collection.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                if (_uDb.Users.Find(User.Identity.Name).isBanned == true || _uDb.Users.Find(User.Identity.Name) == null)
+                if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
                 {
-                    await HttpContext.SignOutAsync();
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Logout");
                 }
                 else
                 {
@@ -410,12 +447,17 @@ namespace Collection.Controllers
 
         public ActionResult Collections(string id)
         {
+            
             if (CurUser.isAdmin)
                 ViewData["admin"] = "true";
             else
             {
                 if (User.Identity.IsAuthenticated)
                 {
+                    if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+                    {
+                        return RedirectToAction("Logout");
+                    }
                     MCollection cl = _colDb.Collections.Find(id);
                     if (cl.Owner == User.Identity.Name)
                         ViewData["admin"] = "true";
@@ -455,6 +497,10 @@ namespace Collection.Controllers
         [Authorize]
         public ActionResult CreateItem(string id)
         {
+            if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+            {
+                return RedirectToAction("Logout");
+            }
             ViewData["Collection"] = id;
             //MCollection collection = _colDb.Collections.Find(id);
             //string jsonString = collection.InputFields;
@@ -510,7 +556,12 @@ namespace Collection.Controllers
 
         public ActionResult EditItem(int id)
         {
+            if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+            {
+                return RedirectToAction("Logout");
+            }
             var item = _itDb.Items.Find(id);
+            ViewData["Collection"] = item.Collection;
             return View(item);
         }
 
@@ -547,6 +598,10 @@ namespace Collection.Controllers
 
         public ActionResult DeleteItem(int id, string collection)
         {
+            if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+            {
+                return RedirectToAction("Logout");
+            }
             var col = _colDb.Collections.Find(collection);
             col.Size -= 1;
             _colDb.Collections.Update(col);
@@ -571,6 +626,10 @@ namespace Collection.Controllers
 
         public ActionResult Item(int id)
         {
+            if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+            {
+                return RedirectToAction("Logout");
+            }
             if (CurUser.isAdmin)
                 ViewData["admin"] = "true";
             else
@@ -598,6 +657,10 @@ namespace Collection.Controllers
 
         public ActionResult Ascend(string name, string value)
         {
+            if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+            {
+                return RedirectToAction("Logout");
+            }
             List<Item> items = new List<Item>();
             List<Item> tmp = new List<Item>();
             if (value == "id")
@@ -610,8 +673,30 @@ namespace Collection.Controllers
             return PartialView("_ItemsList", items);
         }
 
+        public ActionResult AscendCol(string value)
+        {
+            List<MCollection> collections = new List<MCollection>();
+            switch (value)
+            {
+                case "name":
+                    collections = _colDb.Collections.OrderBy(x => x.Name).ToList();
+                    break;
+                case "owner":
+                    collections = _colDb.Collections.OrderBy(x => x.Owner).ToList();
+                    break;
+                case "theme":
+                    collections = _colDb.Collections.OrderBy(x => x.Theme).ToList();
+                    break;
+            }
+            return PartialView("_AllCollectionsList", collections);
+        }
+
         public ActionResult Descend(string name, string value)
         {
+            if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+            {
+                return RedirectToAction("Logout");
+            }
             List<Item> items = new List<Item>();
             List<Item> tmp = new List<Item>();
             if (value == "id")
@@ -623,9 +708,30 @@ namespace Collection.Controllers
                     items.Add(item);
             return PartialView("_ItemsList", items);
         }
+        public ActionResult DescendCol(string value)
+        {
+            List<MCollection> collections = new List<MCollection>();
+            switch (value)
+            {
+                case "name":
+                    collections = _colDb.Collections.OrderByDescending(x => x.Name).ToList();
+                    break;
+                case "owner":
+                    collections = _colDb.Collections.OrderByDescending(x => x.Owner).ToList();
+                    break;
+                case "theme":
+                    collections = _colDb.Collections.OrderByDescending(x => x.Theme).ToList();
+                    break;
+            }
+            return PartialView("_AllCollectionsList", collections);
+        }
 
         public ActionResult UpdateComments(int id)
         {
+            if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+            {
+                return RedirectToAction("Logout");
+            }
             List<Comment> comments = new List<Comment>();
             foreach (Comment comment in _comDb.Comments)
                 if (comment.ItemId == id)
@@ -637,6 +743,10 @@ namespace Collection.Controllers
 
         public ActionResult AddComment(int id, string content)
         {
+            if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
+            {
+                return RedirectToAction("Logout");
+            }
             Comment tmp = new Comment();
             tmp.Name = User.Identity.Name;
             tmp.ItemId = id;
@@ -650,6 +760,14 @@ namespace Collection.Controllers
             dynamic model = new ExpandoObject();
             model.Comments = comments;
             return PartialView("_Comments", model);
+        }
+
+        public ActionResult AllCollections()
+        {
+            List<MCollection> collections = new List<MCollection>();
+            foreach (MCollection col in _colDb.Collections)
+                collections.Add(col);
+            return View(collections);
         }
         public int AddLike(int id)
         {
