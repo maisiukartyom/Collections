@@ -227,13 +227,6 @@ namespace Collection.Controllers
             //tmp.InputFields = jsonString;
             //if (file != null)
             //{
-            byte[] fileBytes;
-            var ms = new MemoryStream();
-            //using (var ms = new MemoryStream())
-            {
-                file.CopyTo(ms);
-                fileBytes = ms.ToArray();
-            }
 
             // Cloudinary part
             Account account = new Account(
@@ -243,14 +236,15 @@ namespace Collection.Controllers
 
             Cloudinary cloudinary = new Cloudinary(account);
 
+            using var stream = file.OpenReadStream();
             // Here filepath or Stream are required
             var uploadParams = new ImageUploadParams()
             {
-                File = new FileDescription(file.FileName, ms)
+                File = new FileDescription(file.FileName, stream)
             };
-
-            var uploadResult = cloudinary.Upload(uploadParams);
-            //var xD = uploadResult.SecureUrl.AbsoluteUri;
+            var uploadResult = new ImageUploadResult();
+            uploadResult = cloudinary.Upload(uploadParams);
+            var xD = uploadResult.SecureUrl.AbsoluteUri;
             //    tmp.Image = uploadResult.SecureUrl.AbsoluteUri;
             //}
             //else
