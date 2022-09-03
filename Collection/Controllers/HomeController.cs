@@ -286,6 +286,7 @@ namespace Collection.Controllers
                 users.Add(user);
             return PartialView("_Users", users);
         }
+        [Authorize]
         public ActionResult DeleteUser(string name)
         {
             var tmp = _uDb.Users.Find(name);
@@ -318,6 +319,7 @@ namespace Collection.Controllers
             return RedirectToAction("Admin");
         }
 
+        [Authorize]
         public IActionResult BanUser(string name)
         {
             var tmp = _uDb.Users.Find(name);
@@ -331,6 +333,7 @@ namespace Collection.Controllers
             }
             return RedirectToAction("Admin");
         }
+        [Authorize]
         public ActionResult DebanUser(string name)
         {
             var tmp = _uDb.Users.Find(name);
@@ -340,6 +343,7 @@ namespace Collection.Controllers
 
             return RedirectToAction("Admin");
         }
+        [Authorize]
         public ActionResult AdminUser(string name)
         {
             var tmp = _uDb.Users.Find(name);
@@ -349,6 +353,7 @@ namespace Collection.Controllers
 
             return RedirectToAction("Admin");
         }
+        [Authorize]
         public ActionResult DeadminUser(string name)
         {
             var tmp = _uDb.Users.Find(name);
@@ -379,26 +384,31 @@ namespace Collection.Controllers
         public async Task<IActionResult> Admin()
         {
             if (User.Identity.IsAuthenticated)
+            {
                 if (_uDb.Users.Find(User.Identity.Name).isBanned == true || _uDb.Users.Find(User.Identity.Name) == null)
                 {
                     await HttpContext.SignOutAsync();
                     return RedirectToAction("Index");
                 }
-            ViewData["name"] = User.Identity.Name;
-            List<User> users = new List<User>();
-            foreach (User user in _uDb.Users)
-                users.Add(user);
-            if (CurUser.isAdmin)
-                return View(users);
-            else
-            {
-                TempData["Error"] = "You are not an admin!";
-                return RedirectToAction("Index");
+                else
+                {
+                    ViewData["name"] = User.Identity.Name;
+                    List<User> users = new List<User>();
+                    foreach (User user in _uDb.Users)
+                        users.Add(user);
+                    if (_uDb.Users.Find(User.Identity.Name).isAdmin == true)
+                        return View(users);
+                    else
+                    {
+                        TempData["Error"] = "You are not an admin!";
+                        return RedirectToAction("Index");
+                    }
+                }
             }
-                
+            return RedirectToAction("Index");
         }
 
-        public ActionResult Collections(string id, string name)
+        public ActionResult Collections(string id)
         {
             if (CurUser.isAdmin)
                 ViewData["admin"] = "true";
@@ -406,7 +416,8 @@ namespace Collection.Controllers
             {
                 if (User.Identity.IsAuthenticated)
                 {
-                    if (name == User.Identity.Name)
+                    MCollection cl = _colDb.Collections.Find(id);
+                    if (cl.Owner == User.Identity.Name)
                         ViewData["admin"] = "true";
                     else
                         ViewData["admin"] = "false";
@@ -441,42 +452,44 @@ namespace Collection.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public ActionResult CreateItem(string id)
         {
             ViewData["Collection"] = id;
-            MCollection collection = _colDb.Collections.Find(id);
-            string jsonString = collection.InputFields;
-            Inputs inputs = JsonSerializer.Deserialize<Inputs>(jsonString)!;
-            ViewData["type1"] = inputs.Type1;
-            ViewData["type2"] = inputs.Type2;
-            ViewData["type3"] = inputs.Type3;
-            ViewData["name1"] = inputs.Name1;
-            ViewData["name2"] = inputs.Name2;
-            ViewData["name3"] = inputs.Name3;
+            //MCollection collection = _colDb.Collections.Find(id);
+            //string jsonString = collection.InputFields;
+            //Inputs inputs = JsonSerializer.Deserialize<Inputs>(jsonString)!;
+            //ViewData["type1"] = inputs.Type1;
+            //ViewData["type2"] = inputs.Type2;
+            //ViewData["type3"] = inputs.Type3;
+            //ViewData["name1"] = inputs.Name1;
+            //ViewData["name2"] = inputs.Name2;
+            //ViewData["name3"] = inputs.Name3;
             return View();
         }
         [HttpPost]
         public ActionResult CreateItem(Item item, string collection, string[] options,
             string name1, string name2, string name3)
         {
-            var itoptions = new InputsItem
-            {
-                Name1 = name1,
-                Name2 = name2,
-                Name3 = name3,
-                Value1 = options[0],
-                Value2 = options[1],
-                Value3 = options[2],
-            };
-            string jsonString = JsonSerializer.Serialize(itoptions);
-            item.Options = jsonString;
-            var col = _colDb.Collections.Find(collection);
-            col.Size += 1;
-            _colDb.Collections.Update(col);
-            _colDb.SaveChanges();
+            //var itoptions = new InputsItem
+            //{
+            //    Name1 = name1,
+            //    Name2 = name2,
+            //    Name3 = name3,
+            //    Value1 = options[0],
+            //    Value2 = options[1],
+            //    Value3 = options[2],
+            //};
+            //string jsonString = JsonSerializer.Serialize(itoptions);
+            //item.Options = jsonString;
+            
             item.Collection = collection;
             if (item.Collection != null && item.Tags != null && item.Name != null)
             {
+                var col = _colDb.Collections.Find(collection);
+                col.Size += 1;
+                _colDb.Collections.Update(col);
+                _colDb.SaveChanges();
                 _itDb.Items.Add(item);
                 _itDb.SaveChanges();
                 TempData["Success"] = "Item created successfully!";
@@ -677,6 +690,13 @@ namespace Collection.Controllers
         public JsonResult GetSearchValue(string search)
         {
             List<string> allsearch = _itDb.Items.Where(x => x.Name.Contains(search)).Select(x => new string(x.Name))
+                .ToList();
+            var unique = allsearch.Distinct().ToList();
+            return Json(unique);
+        }
+        public JsonResult GetTagsValue(string search)
+        {
+            List<string> allsearch = _tagDb.Tags.Where(x => x.Name.Contains(search)).Select(x => new string(x.Name))
                 .ToList();
             var unique = allsearch.Distinct().ToList();
             return Json(unique);

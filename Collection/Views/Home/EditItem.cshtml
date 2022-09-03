@@ -21,7 +21,6 @@
             <input type="text" asp-for="Collection" name="collection" class="form-control" />
         </div>
 
-        <div asp-validation-summary="All"></div>
         <button id="bted" type="submit" class="btn btn-primary" style="width:150px">Edit</button>
         <a id="bback" asp-route-id="@ViewData["Collection"]" asp-action="Collections" class="btn btn-secondary" style="width:150x">Back</a>
     </div>

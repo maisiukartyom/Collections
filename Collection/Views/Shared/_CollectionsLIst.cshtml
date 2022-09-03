@@ -6,9 +6,9 @@
         <div class="ibox" style="box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px; margin-top: 5px; border-radius: 5px;">
 			<div class="product-details">
 		
-			<a asp-route-id="@obj.Name" asp-route-name="@TempData["whois"]" asp-action="Collections"><h1>@obj.Name</h1></a>
-			<h3>@obj.Theme</h3>
-			<h5>Owner: @obj.Owner</h5>
+			<a asp-route-id="@obj.Name" asp-route-name="@TempData["whois"]" asp-action="Collections"><h2>@obj.Name</h2></a>
+			<h4>Theme: @obj.Theme</h4>
+			<h4>Owner: @obj.Owner</h4>
 		
 			<p class="information">@obj.Description</p>
 			</div>
@@ -16,6 +16,7 @@
 			<div class="product-image">
 				<img src="@obj.Image" alt="Nothing">
 			</div>
+			<h5>Size: @obj.Size</h5>
 			<button id="@obj.Name" onclick="del(this.id)">Delete</button>
         </div>
     }

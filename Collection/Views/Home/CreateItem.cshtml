@@ -13,7 +13,7 @@
         </div>
         <div class="mb-3">
             <label id="tags">Tags (sep by '_ + ,')</label>
-            <input asp-for="Tags" class="form-control" />
+            <input id="itags" asp-for="Tags" class="form-control" />
             <span asp-validation-for="Tags" class="text-danger"></span>
         </div>
         <div class="mb-3">
@@ -108,14 +108,33 @@
         </div>
         
         </div>
-        <div asp-validation-summary="All"></div>
         <button type="submit" class="btn btn-primary" style="width:150px" id="crbt">Create</button>
         <a id="back" asp-route-id="@ViewData["Collection"]" 
         asp-action="Collections" class="btn btn-secondary" style="width:150x">Back</a>
     </div>
 </form>
 
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
 <script>
+    $("#itags").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: '@Url.Action("GetTagsValue","Home")',
+                dataType: "json",
+                data: { search: $("#itags").val() },
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return { label: item, value: item };
+                    }));
+                },
+                error: function (xhr, status, error) {
+                    alert("Error");
+                }
+            });
+        },
+    });
     if (localStorage.getItem('lang') === "ru"){
         document.getElementById("crbt").innerText = "Создать"
         document.getElementById("back").innerText = "Назад"

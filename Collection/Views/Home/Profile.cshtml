@@ -4,11 +4,11 @@
 @model List<MCollection>
 
 @*<link rel="stylesheet" href="~/css/site.css" />*@
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
- <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> 
+@*<script src="~/lib/jquery/dist/jquery.min.js"></script>
+ <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script> *@
 
 <div class="profile">
-    // Here POST and multipart/form-data
+    
       <form method="post" enctype="multipart/form-data" asp-action="UpdateCollections">
         <div style="display:flex; flex-direction:column; gap: 20px">
         <div style="display:flex; flex-direction:column; gap: 10px">
@@ -16,7 +16,7 @@
         <a class="btn btn-primary" asp-action="Logout" id="logout">Logout</a>
         </div>
         <input value="@TempData["whois"]" name="user" type="text" style="visibility:hidden; height:1px">
-        // Input for a file
+        
         <input id="ifile" name="file" type="file">
         <div style="display:flex; flex-direction:column; gap: 10px">
              <div class="form-group">
@@ -132,10 +132,19 @@ box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
 	}
 
     if ("@ViewData["admin"]" === "no"){
-        document.getElementById("itheme").readOnly = true;
-        document.getElementById("name").readOnly = true;
-        document.getElementById("describtion").readOnly = true;
-        document.getElementById("btadd").disabled = true;
+
+        //document.getElementById("itheme").readOnly = true;
+        document.getElementById("itheme").style.visibility = "hidden"
+        document.getElementById("ifile").style.visibility = "hidden"
+        document.getElementById("name").style.visibility = "hidden"
+        document.getElementById("describtion").style.visibility = "hidden"
+        document.getElementById("btadd").style.visibility = "hidden"
+        document.getElementById("lname").style.visibility = "hidden"
+        document.getElementById("ldescr").style.visibility = "hidden"
+        document.getElementById("ltheme").style.visibility = "hidden"
+        //document.getElementById("name").readOnly = true;
+        //document.getElementById("describtion").readOnly = true;
+        //document.getElementById("btadd").disabled = true;
     }
 
     if("@ViewData["button"]" === "no"){
