@@ -25,11 +25,16 @@ namespace Collection.Controllers
         private readonly CommentsDbContext _comDb;
         private readonly LikesDbContext _liDb;
         private readonly TagsDbContext _tagDb;
+        private readonly CollectionsPropDbContext _cpropDb;
+        private readonly ItemsPropDbContext _ipropDb;
         public HomeController(ILogger<HomeController> logger, UsersDbContext uDb, CollectionsDbContext colDb,
-            ItemsDbContext itDb, CommentsDbContext comDb, LikesDbContext liDb, TagsDbContext tagDb)
+            ItemsDbContext itDb, CommentsDbContext comDb, LikesDbContext liDb, TagsDbContext tagDb,
+            CollectionsPropDbContext cpropDb, ItemsPropDbContext ipropDb)
         {
             _colDb = colDb;
+            _cpropDb = cpropDb;
             _comDb = comDb;
+            _ipropDb = ipropDb;
             _uDb = uDb;
             _itDb = itDb;
             _liDb = liDb;
@@ -133,7 +138,7 @@ namespace Collection.Controllers
             foreach (MCollection collection in _colDb.Collections)
                 if (collection.Owner == user)
                     collections.Add(collection);
-                
+            
             return View(collections);
         }
 
@@ -202,64 +207,64 @@ namespace Collection.Controllers
 
         [HttpPost]
         public ActionResult UpdateCollections(string user, string name, string theme,
-            string describtion, IFormFile file)
+            string describtion, IFormFile file, string[] ttypes)
         {
             if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
             {
                 return RedirectToAction("Logout");
             }
-            //var inputs = new Inputs
-            //{
-            //    Name1 = input1,
-            //    Name2 = input2,
-            //    Name3 = input3,
-            //    Type1 = radio1,
-            //    Type2 = radio2,
-            //    Type3 = radio3,
-            //};
 
-            //string jsonString = JsonSerializer.Serialize(inputs);
-            //MCollection tmp = new MCollection();
-            //tmp.Name = name;
-            //tmp.Theme = theme;
-            //tmp.Description = describtion;
-            //tmp.Owner = user;
-            //tmp.InputFields = jsonString;
-            //if (file != null)
-            //{
-
-            // Cloudinary part
-            Account account = new Account(
-            "dcogivo7d",
-            "612618111115367",
-            "kuLk0Gipv7SjZQniqG3-yhVA_QQ");
-
-            Cloudinary cloudinary = new Cloudinary(account);
-
-            using var stream = file.OpenReadStream();
-            // Here filepath or Stream are required
-            var uploadParams = new ImageUploadParams()
+            int i = 0;
+            while(i <= ttypes.Length-1)
             {
-                File = new FileDescription(file.FileName, stream)
-            };
-            var uploadResult = new ImageUploadResult();
-            uploadResult = cloudinary.Upload(uploadParams);
-            var xD = uploadResult.SecureUrl.AbsoluteUri;
-            //    tmp.Image = uploadResult.SecureUrl.AbsoluteUri;
-            //}
-            //else
-            //{
-            //    tmp.Image = "";
-            //};
+                CollectionProp temp = new CollectionProp();
+                temp.Type = ttypes[i];
+                temp.Name = ttypes[i+1];
+                temp.CollectionName = name;
+                _cpropDb.CollectionsProps.Add(temp);
+                _cpropDb.SaveChanges();
+                i += 2;
+            }
 
-            //_colDb.Collections.Add(tmp);
-            //_colDb.SaveChanges();
+            MCollection tmp = new MCollection();
+            tmp.Name = name;
+            tmp.Theme = theme;
+            tmp.Description = describtion;
+            tmp.Owner = user;
+            if (file != null)
+            {
+
+                // Cloudinary part
+                    Account account = new Account(
+                "dcogivo7d",
+                "612618111115367",
+                "kuLk0Gipv7SjZQniqG3-yhVA_QQ");
+
+                Cloudinary cloudinary = new Cloudinary(account);
+
+                using var stream = file.OpenReadStream();
+                // Here filepath or Stream are required
+                var uploadParams = new ImageUploadParams()
+                {
+                    File = new FileDescription(file.FileName, stream)
+                };
+                var uploadResult = new ImageUploadResult();
+                uploadResult = cloudinary.Upload(uploadParams);
+                tmp.Image = uploadResult.SecureUrl.AbsoluteUri;
+            }
+            else
+            {
+                tmp.Image = "";
+            };
+
+            _colDb.Collections.Add(tmp);
+            _colDb.SaveChanges();
 
             List<MCollection> collections = new List<MCollection>();
-            //foreach (MCollection collection in _colDb.Collections)
-            //    if (collection.Owner == user)
-            //        collections.Add(collection);
-            return PartialView("_CollectionsList", collections);
+            foreach (MCollection collection in _colDb.Collections)
+                if (collection.Owner == user)
+                    collections.Add(collection);
+            return RedirectToAction("Profile");
         }
 
         public PartialViewResult ShowCollections(string user)
@@ -279,6 +284,47 @@ namespace Collection.Controllers
             var tmp = _colDb.Collections.Find(name);
             _colDb.Collections.Remove(tmp);
             _colDb.SaveChanges();
+            List<Item> tempitems = _itDb.Items.ToList();
+            foreach (Item item in tempitems)
+            {
+                if (item.Collection == name)
+                {
+                    _itDb.Items.Remove(item);
+                    _itDb.SaveChanges();
+                    if (item.Tags != null)
+                    {
+                        string[] tags = item.Tags.Split(", ");
+                        foreach (string temp in tags)
+                        {
+                            var tag = _tagDb.Tags.FirstOrDefault(x => x.Name == temp && x.ItemId == item.Id);
+                            _tagDb.Tags.Remove(tag);
+                            _tagDb.SaveChanges();
+                        }
+                    }
+                    
+                    List<ItemProp> itemsProp = _ipropDb.ItemsProps.ToList();
+                    foreach (ItemProp prop in itemsProp)
+                    {
+                        if (prop.ItemId == item.Id)
+                        {
+                            _ipropDb.ItemsProps.Remove(prop);
+                            _ipropDb.SaveChanges();
+                        }
+
+                    };
+                }
+            }
+            List<CollectionProp> collectionsProp = _cpropDb.CollectionsProps.ToList();
+            foreach(CollectionProp prop in collectionsProp)
+            {
+                if (prop.CollectionName == name)
+                {
+                    _cpropDb.CollectionsProps.Remove(prop);
+                    _cpropDb.SaveChanges();
+                }
+                    
+            };
+            
             List<MCollection> collections = new List<MCollection>();
             foreach (MCollection collection in _colDb.Collections)
                 if (collection.Owner == user)
@@ -398,7 +444,7 @@ namespace Collection.Controllers
             return RedirectToAction("Admin");
         }
 
-        public async Task<IActionResult> Search(string id)
+        public IActionResult Search(string id)
         {
             if (User.Identity.IsAuthenticated)
                 if (_uDb.Users.Find(User.Identity.Name) == null || _uDb.Users.Find(User.Identity.Name).isBanned)
@@ -496,36 +542,28 @@ namespace Collection.Controllers
                 return RedirectToAction("Logout");
             }
             ViewData["Collection"] = id;
-            //MCollection collection = _colDb.Collections.Find(id);
-            //string jsonString = collection.InputFields;
-            //Inputs inputs = JsonSerializer.Deserialize<Inputs>(jsonString)!;
-            //ViewData["type1"] = inputs.Type1;
-            //ViewData["type2"] = inputs.Type2;
-            //ViewData["type3"] = inputs.Type3;
-            //ViewData["name1"] = inputs.Name1;
-            //ViewData["name2"] = inputs.Name2;
-            //ViewData["name3"] = inputs.Name3;
-            return View();
+
+            List<CollectionProp> collectionProps = new List<CollectionProp>();
+            foreach (CollectionProp prop in _cpropDb.CollectionsProps)
+                if (prop.CollectionName == id)
+                    collectionProps.Add(prop);
+
+            return View(collectionProps);
         }
         [HttpPost]
-        public ActionResult CreateItem(Item item, string collection, string[] options,
-            string name1, string name2, string name3)
+        public ActionResult CreateItem(string collection, string name, string tags, string[] props)
         {
-            //var itoptions = new InputsItem
-            //{
-            //    Name1 = name1,
-            //    Name2 = name2,
-            //    Name3 = name3,
-            //    Value1 = options[0],
-            //    Value2 = options[1],
-            //    Value3 = options[2],
-            //};
-            //string jsonString = JsonSerializer.Serialize(itoptions);
-            //item.Options = jsonString;
             
-            item.Collection = collection;
-            if (item.Collection != null && item.Tags != null && item.Name != null)
+            
+            if (collection != null && name != null)
             {
+                Item item = new Item();
+                item.Name = name;
+                if (tags != null)
+                    item.Tags = tags;
+                else
+                    item.Tags = "";
+                item.Collection = collection;
                 var col = _colDb.Collections.Find(collection);
                 col.Size += 1;
                 _colDb.Collections.Update(col);
@@ -533,8 +571,8 @@ namespace Collection.Controllers
                 _itDb.Items.Add(item);
                 _itDb.SaveChanges();
                 TempData["Success"] = "Item created successfully!";
-                string[] tags = item.Tags.Split(", ");
-                foreach (string tmp in tags)
+                string[] ttags = item.Tags.Split(", ");
+                foreach (string tmp in ttags)
                 {
                     Tag tag = new Tag();
                     tag.Name = tmp;
@@ -542,10 +580,30 @@ namespace Collection.Controllers
                     _tagDb.Tags.Add(tag);
                     _tagDb.SaveChanges();
                 }
+                List<CollectionProp> collectionProps = new List<CollectionProp>();
+                foreach (CollectionProp prop in _cpropDb.CollectionsProps)
+                    if (prop.CollectionName == collection)
+                        collectionProps.Add(prop);
+                int i = 0;
+                foreach (string tmp in props)
+                {
+                    ItemProp itemProp = new ItemProp();
+                    itemProp.ColPropId = collectionProps[i].Id;
+                    itemProp.Value = tmp;
+                    itemProp.ItemId = _itDb.Items.FirstOrDefault(x => x.Name == name).Id;
+                    _ipropDb.ItemsProps.Add(itemProp);
+                    _ipropDb.SaveChanges();
+                }
                 return RedirectToAction("Collections", new { id = collection });
             }
-            
-            return View();
+            ViewData["Collection"] = collection;
+
+            List<CollectionProp> collectionprops = new List<CollectionProp>();
+            foreach (CollectionProp prop in _cpropDb.CollectionsProps)
+                if (prop.CollectionName == collection)
+                    collectionprops.Add(prop);
+
+            return View(collectionprops);
         }
 
         public ActionResult EditItem(int id)
@@ -568,7 +626,7 @@ namespace Collection.Controllers
                 _itDb.SaveChanges();
                 TempData["Success"] = "Item edited successfully!";
                 List<Tag> temp = _tagDb.Tags.ToList();
-                foreach(Tag tag in temp)
+                foreach (Tag tag in temp)
                     if (tag.ItemId == item.Id)
                     {
                         _tagDb.Tags.Remove(tag);
@@ -585,7 +643,7 @@ namespace Collection.Controllers
                     _tagDb.SaveChanges();
                 }
                 return RedirectToAction("Collections", new { id = collection });
-                
+
             }
             return View(item);
         }
@@ -600,6 +658,17 @@ namespace Collection.Controllers
             col.Size -= 1;
             _colDb.Collections.Update(col);
             _colDb.SaveChanges();
+
+            List<ItemProp> itemsProp = _ipropDb.ItemsProps.ToList();
+            foreach (ItemProp prop in itemsProp)
+            {
+                if (prop.ItemId == id)
+                {
+                    _ipropDb.ItemsProps.Remove(prop);
+                    _ipropDb.SaveChanges();
+                }
+                    
+            }
 
             var item = _itDb.Items.Find(id);
             _itDb.Items.Remove(item);
@@ -634,9 +703,15 @@ namespace Collection.Controllers
             foreach (Comment comment in _comDb.Comments)
                 if (comment.ItemId == id)
                     comments.Add(comment);
+
+            List<ItemProp> itemsProps = new List<ItemProp>();
+            foreach (ItemProp prop in _ipropDb.ItemsProps)
+                if (prop.ItemId == id)
+                    itemsProps.Add(prop);
             dynamic model = new ExpandoObject();
             model.Comments = comments;
             model.Item = item;
+            model.Props = itemsProps;
             TempData["ItemId"] = id;
             if (_liDb.Likes.FirstOrDefault(l => l.Owner == User.Identity.Name) != null)
                 ViewData["liked"] = "yes";

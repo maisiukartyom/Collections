@@ -1,16 +1,38 @@
 ﻿@model dynamic
 
-<div class="ibox" style="height:180px; margin-top: 50px; margin-bottom:15px; width: 500px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px; border-radius: 5px;">
+<div class="ibox" style="height:280px; margin-top: 50px; margin-bottom:15px; width: 500px; box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px; border-radius: 5px;">
 			<div style="margin-left: 10px; margin-top: 5px">
             <h1>Name: @Model.Item.Name</h1>
 			<h3>Collection: <a asp-route-id="@Model.Item.Collection" asp-action="Collections">@Model.Item.Collection</a></h3>
 			<h5>Tags: @Model.Item.Tags</h5>
             </div>
+            <div class="containner custom-scrollbar" style="
+                margin-left:0px;
+                height: 120px;
+                overflow-x: hidden;
+                overflow-y: auto;
+                text-align:justify; margin-top:25px;
+box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px; color: black">
+        
+      <div style="display:flex; flex-direction:column; gap: 5px"> 
+          @{
+                foreach(var obj in Model.Props)
+                {
+                    if (@obj.Value != "")
+                    {
+                        <label>@obj.Value</label>
+                    };
+                      
+                    }
+          }
+        
+        </div>
+        </div>
 </div>
 <div>
     <button value="empty" onclick="addlike()" id="likes"></button>
 </div>
-<div style="margin-top:100px; display:flex; flex-direction:row; gap: 10px">
+<div style="margin-top:80px; display:flex; flex-direction:row; gap: 10px">
     <div class="form-group">
     <label style="font-size:20px" class="col-form-label mt-4" for="inputDefault">Content</label>
      <textarea class="form-control" id="content" rows="6" name="comment" style="overflow-y: scroll; width: 350px"></textarea>

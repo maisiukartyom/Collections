@@ -21,6 +21,10 @@ builder.Services.AddDbContext<CommentsDbContext>(options => options.UseSqlServer
     builder.Configuration.GetConnectionString("CourseProject")));
 builder.Services.AddDbContext<TagsDbContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("CourseProject")));
+builder.Services.AddDbContext<CollectionsPropDbContext>(options => options.UseSqlServer(
+    builder.Configuration.GetConnectionString("CourseProject")));
+builder.Services.AddDbContext<ItemsPropDbContext>(options => options.UseSqlServer(
+    builder.Configuration.GetConnectionString("CourseProject")));
 
 var app = builder.Build();
 

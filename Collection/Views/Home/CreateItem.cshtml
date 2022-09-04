@@ -1,4 +1,4 @@
-﻿@model Item
+﻿@model List<CollectionProp>
 
 <form method="post">
     <div class="border p-3 mt-4">
@@ -8,109 +8,54 @@
         </div>
         <div class="mb-3">
             <label id="namel">Name</label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
+            <input name="name" type="text" class="form-control" />
         </div>
         <div class="mb-3">
             <label id="tags">Tags (sep by '_ + ,')</label>
-            <input id="itags" asp-for="Tags" class="form-control" />
-            <span asp-validation-for="Tags" class="text-danger"></span>
+            <input id="itags" name="tags" type="text" class="form-control" />
         </div>
         <div class="mb-3">
             <label id="coll">Collection</label>
             <input type="text" value="@ViewData["Collection"]" name="collection" readonly="readonly" class="form-control" />
         </div>
         <div style="display:flex; flex-direction:column; gap: 5px">
+        <div id="divPartial" class="containner custom-scrollbar" style="
+                margin-left:0px;
+                height: 300px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                text-align:justify; margin-top:25px;
+box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;">
+        
       <div style="display:flex; flex-direction:row; gap: 5px"> 
           @{
-                    if (@ViewData["type1"] != null)
+                    foreach(var obj in Model)
                     {
-                       <label>@ViewData["name1"]</label>
-          
-                    switch (ViewData["type1"])
-                    {
-                        case "string":
-                            <input type="text" id="option1" name="options"/>
-                            break;
-                        case "number":
-                            <input type="number" id="option1" name="options"/>
-                            break;
-                        case "textfield":
-                            <textarea rows="6" style="overflow-y: scroll; width: 250px" id="option1" name="options"></textarea>
-                            break;
-                        case "date":
-                            <input type="date" id="option1" name="options"/>
-                            break;
-                        default:
-                            break;
+                        <label>@obj.Name</label>
+                        switch (@obj.Type)
+                        {
+                            case "string":
+                                <input type="text" id="option1" name="props"/>
+                                break;
+                            case "number":
+                                <input type="number" id="option1" name="props"/>
+                                break;
+                            case "txtfield":
+                                <textarea rows="6" style="overflow-y: scroll; width: 250px" id="option1" name="props"></textarea>
+                                break;
+                            case "date":
+                                <input type="date" id="option1" name="props"/>
+                                break;
+                        };
                     }
-                }
-                <input value="@ViewData["name1"]" name="name1" style="visibility: hidden;"/> 
-                    
-                }
-          
-        </div>
-    <div style="display:flex; flex-direction:row; gap: 5px"> 
+          }
         
-                @{
-                    if (ViewData["type2"] != null)
-                    {
-                        <label>@ViewData["name2"]</label>
-                        switch (ViewData["type2"])
-                    {
-                        case "string":
-                            <input type="text" id="option2" name="options"/>
-                            break;
-                        case "number":
-                            <input type="number" id="option2" name="options"/>
-                            break;
-                        case "textfield":
-                            <textarea rows="6" style="overflow-y: scroll; width: 250px" id="option2" name="options"></textarea>
-                            break;
-                        case "date":
-                            <input type="date" id="option2" name="options"/>
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                <input value="@ViewData["name2"]" name="name2" style="visibility: hidden;"/>
-                    }
-                    
         </div>
-
-    <div style="display:flex; flex-direction:row; gap: 5px"> 
-        <label>@ViewData["name3"]</label>
-                @{
-                    if (ViewData["type3"] != null)
-                    {
-                        switch (ViewData["type3"])
-                    {
-                        case "string":
-                            <input type="text" id="option3" name="options"/>
-                            break;
-                        case "number":
-                            <input type="number" id="option3" name="options"/>
-                            break;
-                        case "textfield":
-                            <textarea rows="6" style="overflow-y: scroll; width: 250px" id="option3" name="options"></textarea>
-                            break;
-                        case "date":
-                            <input type="date" id="option3" name="options"/>
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            <input value="@ViewData["name3"]" name="name3" style="visibility: hidden;"/>
-                    }
-                    
-        </div>
-        
         </div>
         <button type="submit" class="btn btn-primary" style="width:150px" id="crbt">Create</button>
         <a id="back" asp-route-id="@ViewData["Collection"]" 
         asp-action="Collections" class="btn btn-secondary" style="width:150x">Back</a>
+    </div>
     </div>
 </form>
 

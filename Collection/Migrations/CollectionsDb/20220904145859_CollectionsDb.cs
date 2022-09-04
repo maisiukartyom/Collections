@@ -17,8 +17,7 @@ namespace Collection.Migrations.CollectionsDb
                     Theme = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Owner = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Size = table.Column<int>(type: "int", nullable: false),
-                    InputFields = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Size = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

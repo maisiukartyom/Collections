@@ -3,18 +3,16 @@ using Collection.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Collection.Migrations.ItemsDb
+namespace Collection.Migrations.CollectionsPropDb
 {
-    [DbContext(typeof(ItemsDbContext))]
-    [Migration("20220829123831_ItemsDb")]
-    partial class ItemsDb
+    [DbContext(typeof(CollectionsPropDbContext))]
+    partial class CollectionsPropDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,7 +21,7 @@ namespace Collection.Migrations.ItemsDb
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Collection.Models.Item", b =>
+            modelBuilder.Entity("Collection.Models.CollectionProp", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -31,7 +29,7 @@ namespace Collection.Migrations.ItemsDb
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Collection")
+                    b.Property<string>("CollectionName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -39,17 +37,13 @@ namespace Collection.Migrations.ItemsDb
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Options")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Tags")
+                    b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Items");
+                    b.ToTable("CollectionsProps");
                 });
 #pragma warning restore 612, 618
         }
